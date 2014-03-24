@@ -1,0 +1,10 @@
+database=SQL_SERVER
+database.url=jdbc:jtds:sqlserver://localhost:1433/coccinella
+database.username=sa
+database.password=cdcsoft
+database.driverClassName=net.sourceforge.jtds.jdbc.Driver
+# connection pool
+cp.maxActive=96
+cp.maxIdle=16
+cp.minIdle=0
+cp.maxWait=60000
