@@ -3,10 +3,13 @@ package org.daybreak.emailler.domain.service.impl;
 import org.daybreak.emailler.domain.model.Crawler;
 import org.daybreak.emailler.domain.model.Prey;
 import org.daybreak.emailler.domain.repository.CrawlerRepository;
-import org.daybreak.emailler.domain.repository.PreyRepository;
 import org.daybreak.emailler.domain.service.CrawlerService;
+import org.daybreak.emailler.domain.service.PreyService;
+import org.daybreak.emailler.domain.service.WareService;
 import org.daybreak.emailler.utils.EACrawlProcessor;
 import org.daybreak.emailler.utils.ExcelPipeline;
+import org.daybreak.emailler.utils.WareScheduler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -16,7 +19,6 @@ import org.springside.modules.persistence.DynamicSpecifications;
 import org.springside.modules.persistence.SearchFilter;
 import us.codecraft.webmagic.Spider;
 
-import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,11 +29,14 @@ import java.util.Map;
 @Service
 public class CrawlerServiceImpl implements CrawlerService {
 
-    @Inject
+    @Autowired
     private CrawlerRepository crawlerRepository;
 
-    @Inject
-    private PreyRepository preyRepository;
+    @Autowired
+    private PreyService preyService;
+
+    @Autowired
+    private WareService wareService;
 
     private Map<Long, Spider> spiderMap = new HashMap<>();
 
@@ -63,11 +68,14 @@ public class CrawlerServiceImpl implements CrawlerService {
         Crawler crawler = crawlerRepository.findOne(crawlerId);
         Spider spider = spiderMap.get(crawlerId);
         if (spider == null || spider.getStatus() == Spider.Status.Stopped) {
-            ExcelPipeline excelPipeline = new ExcelPipeline(crawler, preyRepository);
+            ExcelPipeline excelPipeline = new ExcelPipeline(crawler, preyService);
+            EACrawlProcessor eaCrawlProcessor = new EACrawlProcessor(crawler, preyService, wareService);
+            WareScheduler wareScheduler = new WareScheduler(crawler, wareService);
 
-            spider = Spider.create(new EACrawlProcessor(crawler, preyRepository))
+            spider = Spider.create(eaCrawlProcessor)
+                    .setScheduler(wareScheduler)
                     .addUrl(crawler.getWebsiteUrl())
-                    .addPipeline(excelPipeline).thread(35);
+                    .addPipeline(excelPipeline).thread(20);
             spiderMap.put(crawlerId, spider);
         }
         if (spider.getStatus() != Spider.Status.Running) {
@@ -86,7 +94,7 @@ public class CrawlerServiceImpl implements CrawlerService {
     @Override
     public List<Prey> export(long crawlerId) {
         Crawler crawler = crawlerRepository.findOne(crawlerId);
-        return preyRepository.findAllByCrawlerAndEmailAddressValid(crawler, true);
+        return preyService.findVaildPreyList(crawler, true);
     }
 
     @Override

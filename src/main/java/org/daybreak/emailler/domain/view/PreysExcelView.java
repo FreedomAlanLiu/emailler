@@ -5,7 +5,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.daybreak.emailler.domain.model.Prey;
-import org.daybreak.emailler.utils.EmailAddress;
+import org.daybreak.emailler.utils.email.EmailAddress;
 import org.springframework.web.servlet.view.document.AbstractExcelView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,22 +25,27 @@ public class PreysExcelView extends AbstractExcelView {
         List<Prey> preys = (List) model.get("preys");
 
         HSSFSheet emailAddressSheet = workbook.createSheet("email_address_sheet");
-        emailAddressSheet.setColumnWidth(0, 8000);
-        emailAddressSheet.setColumnWidth(1, 10000);
-        emailAddressSheet.setColumnWidth(2, 30000);
+        emailAddressSheet.setColumnWidth(0, 4000);
+        emailAddressSheet.setColumnWidth(1, 8000);
+        emailAddressSheet.setColumnWidth(2, 10000);
+        emailAddressSheet.setColumnWidth(3, 30000);
 
         int rowIndex = 0;
         for (Prey prey : preys) {
             EmailAddress emailAddress = new EmailAddress(prey.getEmailAddress());
             HSSFRow row = emailAddressSheet.createRow(rowIndex);
+
             HSSFCell cell0 = row.createCell(0);
-            cell0.setCellValue(emailAddress.getUsername());
+            cell0.setCellValue(prey.getId());
 
             HSSFCell cell1 = row.createCell(1);
-            cell1.setCellValue(emailAddress.getAddress());
+            cell1.setCellValue(emailAddress.getUsername());
 
             HSSFCell cell2 = row.createCell(2);
-            cell2.setCellValue(prey.getFromUrl());
+            cell2.setCellValue(emailAddress.getAddress());
+
+            HSSFCell cell3 = row.createCell(3);
+            cell3.setCellValue(prey.getFromUrl());
             rowIndex++;
         }
     }

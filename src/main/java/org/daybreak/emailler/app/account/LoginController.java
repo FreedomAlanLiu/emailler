@@ -1,5 +1,7 @@
 package org.daybreak.emailler.app.account;
 
+import org.daybreak.emailler.utils.email.HttpsConnectionManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.stereotype.Controller;
@@ -15,11 +17,12 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 public class LoginController {
 
-    @Inject
+    @Autowired
     private HttpSessionCsrfTokenRepository csrfTokenRepository;
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
+        new HttpsConnectionManager();
         model.addAttribute("_csrf", getCsrfToken(request, response));
         return "account/login";
     }

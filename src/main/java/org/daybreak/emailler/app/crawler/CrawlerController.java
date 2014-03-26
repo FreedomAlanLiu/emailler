@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import org.daybreak.emailler.domain.model.Crawler;
 import org.daybreak.emailler.domain.model.Prey;
 import org.daybreak.emailler.domain.service.CrawlerService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,7 +34,7 @@ public class CrawlerController {
         sortTypes.put("websiteUrl", "URL");
     }
 
-    @Inject
+    @Autowired
     private CrawlerService crawlerService;
 
     @RequestMapping(value = "/crawlers", method = RequestMethod.GET)

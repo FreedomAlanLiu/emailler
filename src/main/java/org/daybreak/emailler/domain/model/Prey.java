@@ -19,7 +19,7 @@ public class Prey implements Serializable {
 
     private String fromUrl;
 
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, optional = true)
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, optional = false)
     @JoinColumn(name = "crawler_id")
     private Crawler crawler;
 
