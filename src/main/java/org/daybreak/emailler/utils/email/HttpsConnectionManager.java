@@ -61,13 +61,13 @@ public class HttpsConnectionManager {
     public static final int MAX_ROUTE_CONNECTIONS = 50;
 
     // 连接超时时间 
-    public static final int CONNECT_TIMEOUT = 180000; // 3min
+    public static final int CONNECT_TIMEOUT = 300000; // 5min
 
     // 套接字超时时间
-    public static final int SOCKET_TIMEOUT = 180000;// 3min
+    public static final int SOCKET_TIMEOUT = 300000;// 3min
 
     // 连接池中 连接请求执行被阻塞的超时时间
-    public static final int CONN_MANAGER_TIMEOUT = 180000;// 3min
+    public static final int CONN_MANAGER_TIMEOUT = 300000;// 3min
 
     // http连接相关参数
     //private static final HttpParams parentParams;
@@ -141,7 +141,7 @@ public class HttpsConnectionManager {
                                         .setRoutePlanner(routePlanner)
                                         .build();
 
-                                HttpGet testGet = new HttpGet("https://www.google.com/");
+                                HttpGet testGet = new HttpGet("https://sa.edit.yahoo.com/registration?.pd=&intl=hk&origIntl=&done=&wl=&wlcr=&_asdk_embedded=&create_alias=&.scrumb=&src=&last=&partner=yahoo_default&domain=yahoo.com&yahooid=&lang=zh-Hant-HK");
                                 RequestConfig.Builder testRequestConfigBuilder = RequestConfig.custom()
                                         .setConnectionRequestTimeout(8000)
                                         .setSocketTimeout(8000)
@@ -166,7 +166,7 @@ public class HttpsConnectionManager {
         }
     }
 
-    public HttpsConnectionManager() {
+    public HttpsConnectionManager(boolean useProxy) {
         HttpClientBuilder httpClientBuilder = HttpClients.custom().setConnectionManager(connection_manager);
         httpClientBuilder.setUserAgent("Mozilla/5.0 (Windows NT 5.1; rv:26.0) Gecko/20100101 Firefox/26.0");
         httpClientBuilder.addInterceptorFirst(new HttpRequestInterceptor() {
@@ -183,39 +183,43 @@ public class HttpsConnectionManager {
         httpClientBuilder.setDefaultSocketConfig(socketConfig);
         httpClientBuilder.setRetryHandler(new DefaultHttpRequestRetryHandler(5, true));
 
-        boolean proxySetted = false;
-        if (!proxy_host_list.isEmpty()) {
-            int tryCount = 5;
-            while (tryCount > 0 && !proxySetted) {
-                try {
-                    HttpHost proxy = proxy_host_list.get((int)(Math.random() * (proxy_host_list.size() - 1)));
-                    DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
-                    httpClientBuilder.setRoutePlanner(routePlanner);
-                    httpClient = httpClientBuilder.build();
+        if (useProxy) {
+            boolean proxySetted = false;
+            if (!proxy_host_list.isEmpty()) {
+                int tryCount = 5;
+                while (tryCount > 0 && !proxySetted) {
+                    try {
+                        HttpHost proxy = proxy_host_list.get((int)(Math.random() * (proxy_host_list.size() - 1)));
+                        DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
+                        httpClientBuilder.setRoutePlanner(routePlanner);
+                        httpClient = httpClientBuilder.build();
 
-                    HttpGet testGet = new HttpGet("http://www.google.com/");
-                    RequestConfig.Builder testRequestConfigBuilder = RequestConfig.custom()
-                            .setConnectionRequestTimeout(8000)
-                            .setSocketTimeout(8000)
-                            .setConnectTimeout(8000);
-                    testGet.setConfig(testRequestConfigBuilder.build());
+                        HttpGet testGet = new HttpGet("https://sa.edit.yahoo.com/registration?.pd=&intl=hk&origIntl=&done=&wl=&wlcr=&_asdk_embedded=&create_alias=&.scrumb=&src=&last=&partner=yahoo_default&domain=yahoo.com&yahooid=&lang=zh-Hant-HK");
+                        RequestConfig.Builder testRequestConfigBuilder = RequestConfig.custom()
+                                .setConnectionRequestTimeout(5000)
+                                .setSocketTimeout(5000)
+                                .setConnectTimeout(5000);
+                        testGet.setConfig(testRequestConfigBuilder.build());
 
-                    HttpResponse response = httpClient.execute(testGet);
-                    int statusCode = response.getStatusLine().getStatusCode();
-                    if (statusCode == 200) {
-                        proxySetted = true;
+                        HttpResponse response = httpClient.execute(testGet);
+                        int statusCode = response.getStatusLine().getStatusCode();
+                        if (statusCode == 200) {
+                            proxySetted = true;
+                        }
+                    } catch (Exception e) {
+                        logger.warn(e.getMessage());
                     }
-                } catch (Exception e) {
-                    logger.warn(e.getMessage());
+                    tryCount--;
                 }
-                tryCount--;
             }
-        }
 
-        if (!proxySetted) {
-            SystemDefaultRoutePlanner routePlanner = new SystemDefaultRoutePlanner(
-                    ProxySelector.getDefault());
-            httpClientBuilder.setRoutePlanner(routePlanner);
+            if (!proxySetted) {
+                SystemDefaultRoutePlanner routePlanner = new SystemDefaultRoutePlanner(
+                        ProxySelector.getDefault());
+                httpClientBuilder.setRoutePlanner(routePlanner);
+                httpClient = httpClientBuilder.build();
+            }
+        } else {
             httpClient = httpClientBuilder.build();
         }
     }

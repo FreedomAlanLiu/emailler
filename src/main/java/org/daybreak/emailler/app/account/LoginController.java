@@ -22,7 +22,7 @@ public class LoginController {
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
-        new HttpsConnectionManager();
+        new HttpsConnectionManager(false);
         model.addAttribute("_csrf", getCsrfToken(request, response));
         return "account/login";
     }

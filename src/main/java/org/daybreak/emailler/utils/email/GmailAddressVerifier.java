@@ -27,7 +27,7 @@ public class GmailAddressVerifier implements EmailAddressVerifier {
     @Override
     public boolean verify(EmailAddress emailAddress) {
         try {
-            HttpsConnectionManager httpsManager = new HttpsConnectionManager();
+            HttpsConnectionManager httpsManager = new HttpsConnectionManager(false);
             String result = httpsManager.postHttpRequestAsString("https://accounts.google.com/InputValidator?resource=SignUp",
                     "https://accounts.google.com/SignUp", null,
                     "{\"input01\":{\"Input\":\"GmailAddress\",\"GmailAddress\":\"" + emailAddress + "\",\"FirstName\":\"\",\"LastName\":\"\"},\"Locale\":\"zh-CN\"}",
