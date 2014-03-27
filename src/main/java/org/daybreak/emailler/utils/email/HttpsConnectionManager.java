@@ -133,7 +133,9 @@ public class HttpsConnectionManager {
                         public void run() {
                             try {
                                 String[] proxyLineArray = proxyLine.split("\t");
-                                HttpHost proxy = new HttpHost(proxyLineArray[1], Integer.parseInt(proxyLineArray[2]));
+                                String ipport = proxyLineArray[0];
+                                String[] ipporty = ipport.split(":");
+                                HttpHost proxy = new HttpHost(ipporty[0], Integer.parseInt(ipporty[1]));
 
                                 DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
                                 CloseableHttpClient client = HttpClients.custom()
