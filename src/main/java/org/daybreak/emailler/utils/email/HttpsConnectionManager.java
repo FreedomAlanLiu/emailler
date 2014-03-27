@@ -12,6 +12,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.net.ssl.SSLContext;
@@ -78,7 +79,7 @@ public class HttpsConnectionManager {
     // http客户端
     private HttpClient httpClient;
 
-    private static List<HttpHost> proxy_host_list = new ArrayList<>();
+    private static List<HttpHost> proxy_host_list = new CopyOnWriteArrayList<>();
 
     private static ExecutorService executor = Executors.newCachedThreadPool();
 

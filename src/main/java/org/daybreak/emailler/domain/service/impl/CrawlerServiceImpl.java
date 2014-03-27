@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springside.modules.persistence.DynamicSpecifications;
 import org.springside.modules.persistence.SearchFilter;
 import us.codecraft.webmagic.Spider;
@@ -54,6 +55,7 @@ public class CrawlerServiceImpl implements CrawlerService {
     }
 
     @Override
+    @Transactional
     public Crawler saveOrUpdate(Crawler crawler) {
         return crawlerRepository.save(crawler);
     }
