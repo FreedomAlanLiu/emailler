@@ -35,10 +35,10 @@ public class YahooAddressVerifier implements EmailAddressVerifier {
             if (result.contains("\"ResultCode\":\"PERMANENT_FAILURE\"")) {
                 return true;
             }
-            logger.warn(emailAddress + " is not valid. by yahoo verifier.(yahoo response: " + (result.length() > 30 ? (result.substring(0, 30) + "...") : result) + ")");
             if (StringUtils.isBlank(result)) {
                 return DefualtAddressVerifier.getInstance().verify(emailAddress);
             }
+            logger.warn(emailAddress + " is not valid. by yahoo verifier.(yahoo response: " + (result.length() > 30 ? (result.substring(0, 30) + "...") : result) + ")");
         } catch (IOException e) {
             logger.error("", e);
             return DefualtAddressVerifier.getInstance().verify(emailAddress);
@@ -55,5 +55,6 @@ public class YahooAddressVerifier implements EmailAddressVerifier {
         verifier.verify(new EmailAddress("kliumin123446i@yahoo.com.hk")); // invalid address
         verifier.verify(new EmailAddress("alexloan@yahoo.com.sg"));
         verifier.verify(new EmailAddress("sylvia_wl_tsui@yahoo.com"));
+        verifier.verify(new EmailAddress("yukitiy@yahoo.com.hk"));
     }
 }

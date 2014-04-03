@@ -44,4 +44,15 @@ public class PreyServiceImpl implements PreyService {
         }
         return null;
     }
+
+    @Override
+    @Transactional
+    public Prey savePrey(Prey prey, boolean force) {
+        if (force) {
+            return preyRepository.save(prey);
+        } else {
+            return savePrey(prey);
+        }
+
+    }
 }

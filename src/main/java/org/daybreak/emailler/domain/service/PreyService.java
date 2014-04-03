@@ -17,4 +17,6 @@ public interface PreyService {
     public List<Prey> findVaildPreyList(Crawler crawler, boolean emailAddressValid);
 
     public Prey savePrey(Prey prey);
+
+    public Prey savePrey(Prey prey, boolean force);
 }

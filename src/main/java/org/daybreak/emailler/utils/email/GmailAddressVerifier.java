@@ -27,7 +27,7 @@ public class GmailAddressVerifier implements EmailAddressVerifier {
     @Override
     public boolean verify(EmailAddress emailAddress) {
         try {
-            HttpsConnectionManager httpsManager = new HttpsConnectionManager(false);
+            HttpsConnectionManager httpsManager = new HttpsConnectionManager(true);
             String result = httpsManager.postHttpRequestAsString("https://accounts.google.com/InputValidator?resource=SignUp",
                     "https://accounts.google.com/SignUp", null,
                     "{\"input01\":{\"Input\":\"GmailAddress\",\"GmailAddress\":\"" + emailAddress + "\",\"FirstName\":\"\",\"LastName\":\"\"},\"Locale\":\"zh-CN\"}",
@@ -35,10 +35,10 @@ public class GmailAddressVerifier implements EmailAddressVerifier {
             if (result.contains("您所输入的电子邮件地址已与某个帐户相关联")) {
                 return true;
             }
-            logger.warn(emailAddress + " is not valid. by gmail verifier.");
             if (StringUtils.isBlank(result)) {
                 return DefualtAddressVerifier.getInstance().verify(emailAddress);
             }
+            logger.warn(emailAddress + " is not valid. by gmail verifier.");
         } catch (IOException e) {
             logger.error("", e);
             return DefualtAddressVerifier.getInstance().verify(emailAddress);

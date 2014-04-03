@@ -22,7 +22,7 @@ public class EAExistenceVerifier {
 
     private static final Logger logger = LoggerFactory.getLogger(EAExistenceVerifier.class);
 
-    private static ExecutorService executor = Executors.newFixedThreadPool(10);
+    private static ExecutorService executor = Executors.newFixedThreadPool(50);
 
     /**
      * @param email
@@ -30,13 +30,25 @@ public class EAExistenceVerifier {
      */
     public static void verify(final PreyService preyService, final Crawler emailCrawler,
                               final String email, final String link) {
+        verify(preyService, emailCrawler, email, link, false);
+    }
+
+    /**
+     * @param email
+     * @param link
+     */
+    public static void verify(final PreyService preyService, final Crawler emailCrawler,
+                              final String email, final String link, final boolean force) {
 
         Runnable verifierTask = new Runnable() {
             @Override
             public void run() {
-                List<Prey> preys = preyService.findPreyListByEmail(emailCrawler, email);
-                if (preys != null && !preys.isEmpty()) {
-                    return;
+
+                if (!force) {
+                    List<Prey> preys = preyService.findPreyListByEmail(emailCrawler, email);
+                    if (preys != null && !preys.isEmpty()) {
+                        return;
+                    }
                 }
 
                 Prey newPrey = new Prey();
@@ -48,7 +60,7 @@ public class EAExistenceVerifier {
                 if (EAVerifierProxy.verify(emailAddress)) {
                     newPrey.setEmailAddressValid(true);
                     try {
-                        preyService.savePrey(newPrey);
+                        preyService.savePrey(newPrey, force);
                         logger.info("get valid email address: " + email);
                     } catch (Exception e) {
                         logger.warn("save the email address to DB fail, cause: " + e.getMessage());
@@ -56,12 +68,39 @@ public class EAExistenceVerifier {
                 } else {
                     newPrey.setEmailAddressValid(false);
                     try {
-                        preyService.savePrey(newPrey);
+                        preyService.savePrey(newPrey, force);
                         logger.info("get valid email address: " + email);
                     } catch (Exception e) {
                         logger.warn("save the email address to DB fail, cause: " + e.getMessage());
                     }
                     logger.info(email + " is not valid!");
+                }
+            }
+        };
+        executor.execute(verifierTask);
+    }
+
+    public static void verify(final PreyService preyService, final Prey prey) {
+        Runnable verifierTask = new Runnable() {
+            @Override
+            public void run() {
+                if (EAVerifierProxy.verify(new EmailAddress(prey.getEmailAddress()))) {
+                    prey.setEmailAddressValid(true);
+                    try {
+                        preyService.savePrey(prey, true);
+                        logger.info("get valid email address: " + prey.getEmailAddress());
+                    } catch (Exception e) {
+                        logger.warn("save the email address to DB fail, cause: " + e.getMessage());
+                    }
+                } else {
+                    prey.setEmailAddressValid(false);
+                    try {
+                        preyService.savePrey(prey, true);
+                        logger.info("get valid email address: " + prey.getEmailAddress());
+                    } catch (Exception e) {
+                        logger.warn("save the email address to DB fail, cause: " + e.getMessage());
+                    }
+                    logger.info(prey.getEmailAddress() + " is not valid!");
                 }
             }
         };

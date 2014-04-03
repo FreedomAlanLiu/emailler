@@ -4,6 +4,9 @@ import com.google.common.collect.Maps;
 import org.daybreak.emailler.domain.model.Crawler;
 import org.daybreak.emailler.domain.model.Prey;
 import org.daybreak.emailler.domain.service.CrawlerService;
+import org.daybreak.emailler.domain.service.PreyService;
+import org.daybreak.emailler.utils.email.EAExistenceVerifier;
+import org.daybreak.emailler.utils.email.EmailAddress;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -36,6 +39,9 @@ public class CrawlerController {
 
     @Autowired
     private CrawlerService crawlerService;
+
+    @Autowired
+    private PreyService preyService;
 
     @RequestMapping(value = "/crawlers", method = RequestMethod.GET)
     public String index(@RequestParam(value = "page", defaultValue = "1") int pageNumber,
@@ -98,5 +104,15 @@ public class CrawlerController {
         List<Prey> preys = crawlerService.export(id);
         model.addAttribute("preys", preys);
         return "preysExcel";
+    }
+
+    @RequestMapping(value = "/crawlers/{id}/verify", method = RequestMethod.GET)
+    public String verify(@PathVariable("id") long id, Model model) {
+        Crawler crawler = crawlerService.getCrawler(id);
+        List<Prey> preyList = preyService.findVaildPreyList(crawler, true);
+        for (Prey prey : preyList) {
+            EAExistenceVerifier.verify(preyService, prey);
+        }
+        return "redirect:/crawlers";
     }
 }

@@ -86,12 +86,12 @@ public class EACrawlProcessor implements PageProcessor {
         page.putField("link", page.getRequest().getUrl());
 
         // 已经下载过的页面把标志改到数据库
-        List<Ware> wareList = wareService.findWareList(crawler, page.getRequest().getUrl());
+        /*List<Ware> wareList = wareService.findWareList(crawler, page.getRequest().getUrl());
         for (Ware ware : wareList) {
             ware.setStatus(Ware.Status.DOWNLOADED);
             ware.setDownloaded(true);
         }
-        wareService.saveWareList(wareList);
+        wareService.saveWareList(wareList);*/
     }
 
     @Override

@@ -32,7 +32,7 @@ public class LiveAddressVerifier implements EmailAddressVerifier {
     @Override
     public boolean verify(EmailAddress emailAddress) {
         try {
-            HttpsConnectionManager httpsManager = new HttpsConnectionManager(false);
+            HttpsConnectionManager httpsManager = new HttpsConnectionManager(true);
 
             HashMap<String, String> cookieData = new HashMap<>();
             HttpResponse sigupResponse = httpsManager.getHttpRequest("https://signup.live.com/signup.aspx?lic=1", null, null, cookieData);

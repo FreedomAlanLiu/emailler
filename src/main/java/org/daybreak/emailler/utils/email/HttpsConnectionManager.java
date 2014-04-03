@@ -123,7 +123,7 @@ public class HttpsConnectionManager {
         connection_manager.setMaxTotal(MAX_TOTAL_CONNECTIONS);
         connection_manager.setDefaultMaxPerRoute(MAX_ROUTE_CONNECTIONS);
 
-        try {
+        /*try {
             URL fileUrl = HttpsConnectionManager.class.getClassLoader().getResource("/proxy-list.data");
             if (fileUrl != null) {
                 String proxyListString = FileUtils.readFileToString(new File(fileUrl.toURI()));
@@ -166,7 +166,7 @@ public class HttpsConnectionManager {
             }
         } catch (Exception e) {
             logger.error("", e);
-        }
+        }*/
     }
 
     public HttpsConnectionManager(boolean useProxy) {
@@ -188,11 +188,11 @@ public class HttpsConnectionManager {
 
         if (useProxy) {
             boolean proxySetted = false;
-            if (!proxy_host_list.isEmpty()) {
+            /*if (!proxy_host_list.isEmpty()) {
                 int tryCount = 5;
                 while (tryCount > 0 && !proxySetted) {
                     try {
-                        HttpHost proxy = proxy_host_list.get((int)(Math.random() * (proxy_host_list.size() - 1)));
+                        HttpHost proxy = proxy_host_list.get((int) (Math.random() * (proxy_host_list.size() - 1)));
                         DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
                         httpClientBuilder.setRoutePlanner(routePlanner);
                         httpClient = httpClientBuilder.build();
@@ -214,7 +214,7 @@ public class HttpsConnectionManager {
                     }
                     tryCount--;
                 }
-            }
+            }*/
 
             if (!proxySetted) {
                 SystemDefaultRoutePlanner routePlanner = new SystemDefaultRoutePlanner(

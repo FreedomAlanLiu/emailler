@@ -45,6 +45,8 @@
                     <a class="btn" href="${ctx}/crawlers/${crawler.id}/start">启动</a>
                 </c:if>
                 <span>  </span>
+                <a class="btn" href="${ctx}/crawlers/${crawler.id}/verify">Verify</a>
+                <span>  </span>
                 <a class="btn" href="${ctx}/crawlers/${crawler.id}/export.xls">导出Excel</a>
             </td>
         </tr>
