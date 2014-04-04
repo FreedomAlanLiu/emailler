@@ -56,10 +56,10 @@ import org.slf4j.LoggerFactory;
 public class HttpsConnectionManager {
 
     // 连接池里的最大连接数 
-    public static final int MAX_TOTAL_CONNECTIONS = 100;
+    public static final int MAX_TOTAL_CONNECTIONS = 160;
 
     // 每个路由的默认最大连接数  
-    public static final int MAX_ROUTE_CONNECTIONS = 50;
+    public static final int MAX_ROUTE_CONNECTIONS = 80;
 
     // 连接超时时间 
     public static final int CONNECT_TIMEOUT = 300000; // 5min

@@ -79,7 +79,7 @@ public class CrawlerServiceImpl implements CrawlerService {
             spider = Spider.create(eaCrawlProcessor)
                     .setScheduler(redisScheduler)
                     .addUrl(crawler.getWebsiteUrl())
-                    .addPipeline(excelPipeline).thread(50);
+                    .addPipeline(excelPipeline).thread(80);
             spiderMap.put(crawlerId, spider);
         }
         if (spider.getStatus() != Spider.Status.Running) {

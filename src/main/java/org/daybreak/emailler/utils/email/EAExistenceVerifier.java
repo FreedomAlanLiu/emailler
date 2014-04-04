@@ -22,7 +22,7 @@ public class EAExistenceVerifier {
 
     private static final Logger logger = LoggerFactory.getLogger(EAExistenceVerifier.class);
 
-    private static ExecutorService executor = Executors.newFixedThreadPool(50);
+    private static ExecutorService executor = Executors.newFixedThreadPool(80);
 
     /**
      * @param email
@@ -69,7 +69,7 @@ public class EAExistenceVerifier {
                     newPrey.setEmailAddressValid(false);
                     try {
                         preyService.savePrey(newPrey, force);
-                        logger.info("get valid email address: " + email);
+                        logger.info("get invalid email address: " + email);
                     } catch (Exception e) {
                         logger.warn("save the email address to DB fail, cause: " + e.getMessage());
                     }
