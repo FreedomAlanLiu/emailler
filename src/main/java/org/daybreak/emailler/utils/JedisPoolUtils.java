@@ -13,6 +13,15 @@ public class JedisPoolUtils {
     private static ShardedJedisPool pool;
 
     private static void createPool() {
+        // 建立连接池配置参数
+        JedisPoolConfig config = new JedisPoolConfig();
+        // 设置最大连接数
+        config.setMaxActive(200);
+        // 设置最大阻塞时间，记住是毫秒数milliseconds
+        config.setMaxWait(100000);
+        // 设置空闲连接
+        config.setMaxIdle(20);
+
         List<JedisShardInfo> shards = new ArrayList<>();
 
         JedisShardInfo si = new JedisShardInfo("218.244.142.197", 6379);
@@ -24,7 +33,7 @@ public class JedisPoolUtils {
         si = new JedisShardInfo("112.124.66.214", 6379);
         shards.add(si);
 
-        pool = new ShardedJedisPool(new JedisPoolConfig(), shards);
+        pool = new ShardedJedisPool(config, shards);
     }
 
     /**
