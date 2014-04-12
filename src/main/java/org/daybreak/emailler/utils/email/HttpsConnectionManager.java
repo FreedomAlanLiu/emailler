@@ -62,13 +62,13 @@ public class HttpsConnectionManager {
     public static final int MAX_ROUTE_CONNECTIONS = 80;
 
     // 连接超时时间 
-    public static final int CONNECT_TIMEOUT = 300000; // 5min
+    public static final int CONNECT_TIMEOUT = 30000;
 
     // 套接字超时时间
-    public static final int SOCKET_TIMEOUT = 300000;// 3min
+    public static final int SOCKET_TIMEOUT = 30000;
 
     // 连接池中 连接请求执行被阻塞的超时时间
-    public static final int CONN_MANAGER_TIMEOUT = 300000;// 3min
+    public static final int CONN_MANAGER_TIMEOUT = 30000;
 
     // http连接相关参数
     //private static final HttpParams parentParams;
@@ -77,7 +77,7 @@ public class HttpsConnectionManager {
     private static final PoolingHttpClientConnectionManager connection_manager;
 
     // http客户端
-    private HttpClient httpClient;
+    private CloseableHttpClient httpClient;
 
     private static List<HttpHost> proxy_host_list = new CopyOnWriteArrayList<>();
 
@@ -171,7 +171,7 @@ public class HttpsConnectionManager {
 
     public HttpsConnectionManager(boolean useProxy) {
         HttpClientBuilder httpClientBuilder = HttpClients.custom().setConnectionManager(connection_manager);
-        httpClientBuilder.setUserAgent("Mozilla/5.0 (Windows NT 5.1; rv:26.0) Gecko/20100101 Firefox/26.0");
+        httpClientBuilder.setUserAgent("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0");
         httpClientBuilder.addInterceptorFirst(new HttpRequestInterceptor() {
             @Override
             public void process(
@@ -256,6 +256,7 @@ public class HttpsConnectionManager {
         HttpGet httpGet = new HttpGet(url);
 
         RequestConfig.Builder requestConfigBuilder = RequestConfig.custom()
+                .setCircularRedirectsAllowed(false)
                 .setConnectionRequestTimeout(CONN_MANAGER_TIMEOUT)
                 .setSocketTimeout(SOCKET_TIMEOUT)
                 .setConnectTimeout(CONNECT_TIMEOUT);
@@ -268,7 +269,6 @@ public class HttpsConnectionManager {
         httpGet.setHeader(HttpHeaders.CACHE_CONTROL, "no-cache");
         httpGet.setHeader(HttpHeaders.CONNECTION, "keep-alive");
         httpGet.setHeader(HttpHeaders.REFERER, referer);
-        httpGet.setHeader(HttpHeaders.USER_AGENT, "Mozilla/5.0 (Windows NT 5.1; rv:26.0) Gecko/20100101 Firefox/26.0");
 
         if (cookieData != null) {
             boolean first = true;
@@ -347,6 +347,7 @@ public class HttpsConnectionManager {
         HttpPost httpPost = new HttpPost(url);
 
         RequestConfig.Builder requestConfigBuilder = RequestConfig.custom()
+                .setCircularRedirectsAllowed(false)
                 .setConnectionRequestTimeout(CONN_MANAGER_TIMEOUT)
                 .setSocketTimeout(SOCKET_TIMEOUT)
                 .setConnectTimeout(CONNECT_TIMEOUT);
@@ -364,7 +365,6 @@ public class HttpsConnectionManager {
             httpPost.setHeader(HttpHeaders.CONTENT_TYPE, contentType + ";charset=UTF-8");
         }
         httpPost.setHeader(HttpHeaders.REFERER, referer);
-        httpPost.setHeader(HttpHeaders.USER_AGENT, "Mozilla/5.0 (Windows NT 5.1; rv:26.0) Gecko/20100101 Firefox/26.0");
 
         if (cookieData != null) {
             boolean first = true;

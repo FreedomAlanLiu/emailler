@@ -13,6 +13,7 @@ public class Ware5 implements Ware {
     @GeneratedValue
     private long id;
 
+    @Column(unique = true)
     private String uuid;
     
     private String url;

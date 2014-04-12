@@ -5,7 +5,10 @@
  */
 package org.daybreak.emailler.utils;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.daybreak.emailler.domain.model.Crawler;
 import org.daybreak.emailler.domain.model.Prey;
@@ -17,6 +20,7 @@ import org.daybreak.emailler.domain.service.WareService;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.processor.PageProcessor;
+import us.codecraft.webmagic.selector.Html;
 
 /**
  * @author Alan
@@ -48,7 +52,12 @@ public class EACrawlProcessor implements PageProcessor {
     @Override
     public void process(Page page) {
         if (crawler.isWholeWebsit()) {
-            List<String> links = page.getHtml().links().all();
+            Html html = page.getHtml();
+            List<String> linkHrefs = html.xpath("//link/@href").all();
+            List<String> aHrefs = html.links().all();
+            Set<String> links = new HashSet<>();
+            links.addAll(linkHrefs);
+            links.addAll(aHrefs);
             for (String link : links) {
 
                 // 如何已经存在抓取结果中了，此link不再抓取
@@ -86,12 +95,12 @@ public class EACrawlProcessor implements PageProcessor {
         page.putField("link", page.getRequest().getUrl());
 
         // 已经下载过的页面把标志改到数据库
-        /*List<Ware> wareList = wareService.findWareList(crawler, page.getRequest().getUrl());
+        List<Ware> wareList = wareService.findWareList(crawler, page.getRequest().getUrl());
         for (Ware ware : wareList) {
             ware.setStatus(Ware.Status.DOWNLOADED);
             ware.setDownloaded(true);
         }
-        wareService.saveWareList(wareList);*/
+        wareService.saveWareList(wareList);
     }
 
     @Override

@@ -31,8 +31,9 @@ public class LiveAddressVerifier implements EmailAddressVerifier {
 
     @Override
     public boolean verify(EmailAddress emailAddress) {
+        HttpsConnectionManager httpsManager = null;
         try {
-            HttpsConnectionManager httpsManager = new HttpsConnectionManager(true);
+            httpsManager = new HttpsConnectionManager(true);
 
             HashMap<String, String> cookieData = new HashMap<>();
             HttpResponse sigupResponse = httpsManager.getHttpRequest("https://signup.live.com/signup.aspx?lic=1", null, null, cookieData);
@@ -92,6 +93,8 @@ public class LiveAddressVerifier implements EmailAddressVerifier {
         } catch (IOException e) {
             logger.error("", e);
             return DefualtAddressVerifier.getInstance().verify(emailAddress);
+        } finally {
+            //
         }
         return false;
     }

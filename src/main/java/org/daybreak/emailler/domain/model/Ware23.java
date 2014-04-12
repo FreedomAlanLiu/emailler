@@ -1,13 +1,12 @@
 package org.daybreak.emailler.domain.model;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 /**
  * Created by Alan on 14-3-25.
  */
 @Entity
-public class Ware8 implements Ware {
+public class Ware23 implements Ware {
 
     @Id
     @GeneratedValue
@@ -15,7 +14,7 @@ public class Ware8 implements Ware {
 
     @Column(unique = true)
     private String uuid;
-    
+
     private String url;
 
     @Enumerated(EnumType.ORDINAL)

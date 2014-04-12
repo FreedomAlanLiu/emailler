@@ -1,5 +1,6 @@
 package org.daybreak.emailler.utils;
 
+import com.google.common.hash.Hashing;
 import org.daybreak.emailler.domain.model.*;
 import org.daybreak.emailler.domain.service.WareService;
 import org.slf4j.Logger;
@@ -8,6 +9,7 @@ import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Task;
 import us.codecraft.webmagic.scheduler.Scheduler;
 
+import java.nio.charset.Charset;
 import java.util.List;
 
 /**
@@ -29,20 +31,19 @@ public class WareScheduler implements Scheduler {
     @Override
     public void push(Request request, Task task) {
         logger.debug("push to ware(DB table) " + request.getUrl());
-        List<Ware> wares = wareService.findWareList(crawler, request.getUrl());
-        if (request.getExtra(Request.CYCLE_TRIED_TIMES) != null || (wares == null || wares.isEmpty())) {
-            pushWhenNoDuplicate(request, task);
-        }
+        pushWhenNoDuplicate(request, task);
     }
 
     public void pushWhenNoDuplicate(Request request, Task task) {
         Ware ware = getWare(request.getUrl());
-        ware.setUuid(task.getUUID());
-        ware.setUrl(request.getUrl());
-        ware.setDownloaded(false);
-        ware.setStatus(Ware.Status.WAITING);
-        ware.setCrawler(crawler);
-        wareService.saveWare(ware);
+        if (ware != null) {
+            ware.setUuid(Hashing.md5().hashString(request.getUrl(), Charset.forName("UTF-8")).toString());
+            ware.setUrl(request.getUrl());
+            ware.setDownloaded(false);
+            ware.setStatus(Ware.Status.WAITING);
+            ware.setCrawler(crawler);
+            wareService.saveWare(ware);
+        }
     }
 
     @Override
@@ -55,7 +56,7 @@ public class WareScheduler implements Scheduler {
     }
 
     private Ware getWare(String url) {
-        int i = Math.abs(url.hashCode() % 10);
+        int i = Math.abs(url.hashCode() % 30);
         switch (i) {
             case 0: return new Ware0();
             case 1: return new Ware1();
@@ -67,6 +68,26 @@ public class WareScheduler implements Scheduler {
             case 7: return new Ware7();
             case 8: return new Ware8();
             case 9: return new Ware9();
+            case 10: return new Ware10();
+            case 11: return new Ware11();
+            case 12: return new Ware12();
+            case 13: return new Ware13();
+            case 14: return new Ware14();
+            case 15: return new Ware15();
+            case 16: return new Ware16();
+            case 17: return new Ware17();
+            case 18: return new Ware18();
+            case 19: return new Ware19();
+            case 20: return new Ware20();
+            case 21: return new Ware21();
+            case 22: return new Ware22();
+            case 23: return new Ware23();
+            case 24: return new Ware24();
+            case 25: return new Ware25();
+            case 26: return new Ware26();
+            case 27: return new Ware27();
+            case 28: return new Ware28();
+            case 29: return new Ware29();
         }
         return null;
     }

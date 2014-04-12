@@ -22,7 +22,7 @@ public class EAExistenceVerifier {
 
     private static final Logger logger = LoggerFactory.getLogger(EAExistenceVerifier.class);
 
-    private static ExecutorService executor = Executors.newFixedThreadPool(80);
+    private static ExecutorService executor = Executors.newFixedThreadPool(50);
 
     /**
      * @param email

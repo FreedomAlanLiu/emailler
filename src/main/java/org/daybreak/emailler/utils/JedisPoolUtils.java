@@ -24,14 +24,14 @@ public class JedisPoolUtils {
 
         List<JedisShardInfo> shards = new ArrayList<>();
 
-        JedisShardInfo si = new JedisShardInfo("218.244.142.197", 6379);
-        shards.add(si);
+        JedisShardInfo si1 = new JedisShardInfo("218.244.142.197", 6379);
+        shards.add(si1);
 
-        si = new JedisShardInfo("115.29.221.130", 6379);
-        shards.add(si);
+        JedisShardInfo si2 = new JedisShardInfo("115.29.221.130", 6379);
+        shards.add(si2);
 
-        si = new JedisShardInfo("112.124.66.214", 6379);
-        shards.add(si);
+        JedisShardInfo si3 = new JedisShardInfo("112.124.66.214", 6379);
+        shards.add(si3);
 
         pool = new ShardedJedisPool(config, shards);
     }

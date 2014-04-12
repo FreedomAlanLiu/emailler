@@ -6,10 +6,7 @@ import org.daybreak.emailler.domain.repository.CrawlerRepository;
 import org.daybreak.emailler.domain.service.CrawlerService;
 import org.daybreak.emailler.domain.service.PreyService;
 import org.daybreak.emailler.domain.service.WareService;
-import org.daybreak.emailler.utils.EACrawlProcessor;
-import org.daybreak.emailler.utils.ExcelPipeline;
-import org.daybreak.emailler.utils.RedisScheduler;
-import org.daybreak.emailler.utils.WareScheduler;
+import org.daybreak.emailler.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springside.modules.persistence.DynamicSpecifications;
 import org.springside.modules.persistence.SearchFilter;
 import us.codecraft.webmagic.Spider;
+import us.codecraft.webmagic.downloader.Downloader;
 
 import java.util.HashMap;
 import java.util.List;
@@ -73,13 +71,13 @@ public class CrawlerServiceImpl implements CrawlerService {
         if (spider == null || spider.getStatus() == Spider.Status.Stopped) {
             ExcelPipeline excelPipeline = new ExcelPipeline(crawler, preyService);
             EACrawlProcessor eaCrawlProcessor = new EACrawlProcessor(crawler, preyService, wareService);
-            //WareScheduler wareScheduler = new WareScheduler(crawler, wareService);
-            RedisScheduler redisScheduler = new RedisScheduler();
+            WareScheduler wareScheduler = new WareScheduler(crawler, wareService);
+            //RedisScheduler redisScheduler = new RedisScheduler();
 
             spider = Spider.create(eaCrawlProcessor)
-                    .setScheduler(redisScheduler)
+                    .setScheduler(wareScheduler)
                     .addUrl(crawler.getWebsiteUrl())
-                    .addPipeline(excelPipeline).thread(80);
+                    .addPipeline(excelPipeline).thread(50);
             spiderMap.put(crawlerId, spider);
         }
         if (spider.getStatus() != Spider.Status.Running) {
