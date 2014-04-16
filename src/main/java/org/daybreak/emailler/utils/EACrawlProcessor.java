@@ -55,10 +55,23 @@ public class EACrawlProcessor implements PageProcessor {
             Html html = page.getHtml();
             List<String> linkHrefs = html.xpath("//link/@href").all();
             List<String> aHrefs = html.links().all();
+            List<String> urls1 = html.regex("\"([http|https]+://[^\\s]+)\"").all();
+            List<String> urls2 = html.regex("'([http|https]+://[^\\s]+)'").all();
             Set<String> links = new HashSet<>();
             links.addAll(linkHrefs);
             links.addAll(aHrefs);
+            links.addAll(urls1);
+            links.addAll(urls2);
             for (String link : links) {
+
+                if (link.endsWith(".js")
+                        || link.endsWith(".css")
+                        || link.endsWith(".png")
+                        || link.endsWith(".jpg")
+                        || link.endsWith(".gif")
+                        || link.endsWith(".icon")) {
+                    continue;
+                }
 
                 // 如何已经存在抓取结果中了，此link不再抓取
                 /*
